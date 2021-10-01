@@ -95,15 +95,50 @@ end
 """
 Двигает робота по диагонали в направлении first_direction, second_direction. Параметр fill указывает, закрашивать ли клетки, по которым идет робот.
 """
-function move_diagonal!(r::Robot, first_direction::HorizonSide, second_direction::HorizonSide, fill::Bool=false, fill_first::Bool=false)
+function move_diagonal!(r::Robot, first_direction::HorizonSide, second_direction::HorizonSide, fill::Bool=false, fill_first::Bool=false)::Int
     if fill_first && !ismarker(r)
         putmarker!(r)
     end
+    steps = 0
     while !isborder(r, first_direction) && !isborder(r, second_direction)
         move!(r, first_direction)
         move!(r, second_direction)
         if fill && !ismarker(r)
             putmarker!(r)
         end
+        steps += 1
     end
+    return steps
+end
+
+function do_n_diagonal!(r::Robot, first_direction::HorizonSide, second_direction::HorizonSide, steps::Int)
+    for i in 1:steps
+        move!(r, first_direction)
+        move!(r, second_direction)
+    end
+end
+
+"""
+Функция, перемещающая робота на один шаг в заданном направлении. Если там есть перегородка, робот пытается ее обойти.
+Если перегородку возможно преодолеть, робот это делает и возвращает значение true.
+Если перегородку невозможно преодолеть (робот на границе), робот остается на месте и возвращает значение false
+"""
+function move_through_wall!(r::Robot, direction::HorizonSide)::Bool
+    normal_direction = orto_left(direction)
+    delta_x = 0
+    while isborder(r, direction)
+        if isborder(r, normal_direction)
+            do_n_steps!(r, opposite_direction(normal_direction), delta_x)
+            return false
+        end
+        move!(r, normal_direction)
+        delta_x += 1
+    end
+    move!(r, direction)
+    normal_direction = opposite_direction(normal_direction)
+    while isborder(r, normal_direction)
+        move!(r, direction)
+    end
+    do_n_steps!(r, normal_direction, delta_x)
+    return true
 end
