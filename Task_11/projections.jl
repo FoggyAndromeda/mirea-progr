@@ -14,6 +14,11 @@ using HorizonSideRobots
 
 include("..\\movement_patterns_lib.jl")
 
+"""
+Функция, расставляющая маркеры напротив положение робота около внешних стенок и возвращающая робота в исходное положение
+\n 
+r - объект робота
+"""
 function projections!(r::Robot)
     for directions in [(Nord, West), (Sud, Ost)]
         first, second = directions
@@ -24,6 +29,6 @@ function projections!(r::Robot)
             putmarker!(r)
             do_n_steps!(r, directions[i], steps_from_origin[i])
         end
-        move_path!(r, path, true)
+        move_path!(r, path, back=true)
     end
 end

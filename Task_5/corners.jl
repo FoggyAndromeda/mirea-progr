@@ -13,12 +13,17 @@ using HorizonSideRobots
 
 include("..\\movement_patterns_lib.jl")
 
+"""
+Функция, расставляющая маркеры на углах поля и возвращает робота в исходное положение
+\n 
+r - объект робота
+"""
 function markers_on_corners(r::Robot)
     for first in [Sud, Nord]
         for second in [Ost, West]
             path = move_to_corner!(r, first, second)
             putmarker!(r)
-            move_path!(r, path, true)
+            move_path!(r, path, back=true)
         end
     end
 end

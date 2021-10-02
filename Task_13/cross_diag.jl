@@ -11,10 +11,15 @@ using HorizonSideRobots
 
 include("..\\movement_patterns_lib.jl")
 
+"""
+Функция, создающая крест из маркеров (в форме Х) с центром в начальном положении робота
+\n 
+r - объект робота
+"""
 function diag_cross(r::Robot)
     for first in [Nord, Sud]
         for second in [West, Ost]
-            steps = move_diagonal!(r, first, second, true)
+            steps = move_diagonal!(r, first, second, fill=true)
             do_n_diagonal!(r, opposite_direction(first), opposite_direction(second), steps)
         end
     end

@@ -12,6 +12,11 @@ using HorizonSideRobots
 
 include("..\\movement_patterns_lib.jl")
 
+"""
+Функция, расставляющая маркеры на поле в шахматном порядке (начальное положение робота закрашено) и возвращает робота в исходное положение
+\n 
+r - объект робота
+"""
 function chess(r::Robot)
     y = move_until_border!(r, Nord)
     x = move_until_border!(r, West)

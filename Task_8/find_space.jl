@@ -12,6 +12,11 @@ using HorizonSideRobots
 
 include("..\\movement_patterns_lib.jl")
 
+"""
+Функция, находящая проход в бесконечно продолжающейся горизонтальной перегородкой
+\n 
+r - объект робота
+"""
 function find_space(r::Robot)
     steps = 1
     direction = Ost

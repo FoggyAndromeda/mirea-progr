@@ -11,6 +11,11 @@ using HorizonSideRobots
 
 include("..\\movement_patterns_lib.jl")
 
+"""
+Функция, находящая прямоугольник на поле, расставляющая маректы по переиметру найденного прямоугольника и возвращающая робота в исходное положение
+\n 
+r - объект робота
+"""
 function find_rect(r::Robot)
     path = move_to_corner!(r, Nord, West)
     width = move_until_border!(r, Ost)
@@ -26,5 +31,5 @@ function find_rect(r::Robot)
         move!(r, orto_left(direction))
     end
     move_to_corner!(r, Nord, West)
-    move_path!(r, path, true)
+    move_path!(r, path, back=true)
 end

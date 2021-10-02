@@ -11,9 +11,14 @@ using HorizonSideRobots
 
 include("..\\movement_patterns_lib.jl")
 
+"""
+Функция, рассставляющая маркеры в виде креста и возвращает робота в исходное положение (центр креста)
+\n
+r - объект робота
+"""
 function cross!(r::Robot)
     for direction in [Nord, West, Sud, Ost]
-        steps = move_until_border!(r, direction, true)
+        steps = move_until_border!(r, direction, fill=true)
         do_n_steps!(r, opposite_direction(direction), steps)
     end
     if !ismarker(r)

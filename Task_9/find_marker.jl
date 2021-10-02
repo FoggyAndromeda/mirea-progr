@@ -10,6 +10,17 @@ find_marker.sit
 
 using HorizonSideRobots
 
+"""
+Функция, делающая steps шагов в направлении direction или двигающаяся до маркера, расположенного не более, чем в steps шагов в направлении direction
+\n 
+///INPUT/// \n
+r - объект робота\n 
+direction - направление, в которое необходимо двигаться\n 
+steps - количество шагов, которое необходимо сделать \n
+///OUTPUT///\n
+true, если функция нашла маркер на расстоянии не больше steps\n
+false если робот сделал steps шагов в заданном направленнии и не нашел маркер\n
+"""
 function do_n_steps!(r::Robot, direction::HorizonSide, steps::Int)
     for i in 1:steps
         move!(r, direction)
@@ -23,6 +34,11 @@ function do_n_steps!(r::Robot, direction::HorizonSide, steps::Int)
     return false
 end
 
+"""
+Функция, ищущая маркер на безграничном поле
+\n 
+r - объект робота
+"""
 function find_marker!(r::Robot)
     if ismarker(r)
         return true
@@ -38,6 +54,3 @@ function find_marker!(r::Robot)
         end
     end
 end
-
-r = Robot("find_marker.sit", animate=true)
-find_marker!(r)
