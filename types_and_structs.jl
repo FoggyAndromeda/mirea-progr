@@ -117,6 +117,26 @@ function move!(c::Coords, direction::HorizonSide)
     end
 end
 
+get_coords(c::Coords) = [c.x, c.y]
+
+function set_coords(c::Coords, x::Int, y::Int)
+    c.x = x
+    c.y = y
+end
+struct CoordBorderRobot <:AbstractBorderRobot
+    robot::Robot
+    coord::Coords
+    CoordBorderRobot(r::Robot, c::Coords) = new(r, c)
+    CoordBorderRobot(r::Robot) = new(r, Coords())
+    CoordBorderRobot() = new(Robot(), Coords())
+end
+
+function move!(r::CoordBorderRobot, direction::HorizonSide)
+    move!(r.robot, direction)
+    move!(r.coord, direction)
+end
+
+get(r::CoordBorderRobot) = r.robot
 abstract type AbstractCoordRobot <: AbstractRobot
 end
 
