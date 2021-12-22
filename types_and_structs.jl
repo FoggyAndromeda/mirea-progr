@@ -5,9 +5,16 @@ opposite_direction(d::HorizonSide) = HorizonSide((Int(d) + 2) % 4)
 orto_left(d::HorizonSide) = HorizonSide((Int(d) + 1) % 4)
 orto_right(d::HorizonSide) = HorizonSide((Int(d) + 3) % 4)
 #-----------------------------------------------
+
+"""
+Родительский тип всех структур для робота
+"""
 abstract type AbstractRobot
 end
 
+"""
+Определение функций для новых структур робота
+"""
 move!(robot::AbstractRobot, side::HorizonSide) = move!(get(robot), side)
 isborder(robot::AbstractRobot,  side::HorizonSide) = isborder(get(robot), side)
 putmarker!(robot::AbstractRobot) = putmarker!(get(robot))
@@ -15,7 +22,9 @@ ismarker(robot::AbstractRobot) = ismarker(get(robot))
 temperature(robot::AbstractRobot) = temperature(get(robot))
 get(robot::AbstractRobot) = nothing
 
-
+"""
+Функция, перемещающая робота на n шагов в указанном направлении
+"""
 function do_n_steps!(r::AbstractRobot, direction::HorizonSide, steps::Int; fill::Bool=false, first_fill::Bool=false)
     if fill && !ismarker(r) && first_fill
         putmarker!(r)
@@ -28,6 +37,9 @@ function do_n_steps!(r::AbstractRobot, direction::HorizonSide, steps::Int; fill:
     end
 end
 
+"""
+Функция, перемещающая робота до границы в указанном направлении
+"""
 function move_until_border!(r::AbstractRobot, direction::HorizonSide)
     counter = 0
     while !isborder(r, direction)
@@ -37,16 +49,18 @@ function move_until_border!(r::AbstractRobot, direction::HorizonSide)
     return counter
 end
 
-function do_n_steps(r::AbstractRobot, dir::HorizonSide, n::Integer)
-    for i in 1:n
-        putmarker!(r)
-        move!(r, dir)
-    end
-end
 #------------------------------------------------
+
+"""
+Родительский тип для всех роботов с возможность обхода перегородок
+"""
 abstract type AbstractBorderRobot <: AbstractRobot
 end
 
+"""
+Функция обхода перегородки в заданном направлении. Возвращает смещение робота в данно мнаправлениее 
+(0, если перегородку нельзя обойти; 1, если перегородка - отрезок и т.д.) 
+"""
 function try_move!(r::AbstractBorderRobot, direction::HorizonSide)
     normal_direction = orto_left(direction)
     delta_x = 0
@@ -69,6 +83,9 @@ function try_move!(r::AbstractBorderRobot, direction::HorizonSide)
     return delta_dir
 end
 
+"""
+Перемещает робота к внешней границе в заданном направлении
+"""
 function move_until_border!(r::AbstractBorderRobot, direction::HorizonSide; fill::Bool=false)
     counter = 0
     while try_move!(r, direction) != 0
@@ -80,6 +97,9 @@ function move_until_border!(r::AbstractBorderRobot, direction::HorizonSide; fill
     return counter
 end
 
+"""
+Функция, делающая n шагов через перегородки
+"""
 function do_n_steps_try!(r::AbstractBorderRobot, dir::HorizonSide, n::Integer, fill::Bool=false)
     for i in 1:n
         if fill
@@ -89,15 +109,24 @@ function do_n_steps_try!(r::AbstractBorderRobot, dir::HorizonSide, n::Integer, f
     end
 end
 
+"""
+Робот, умеющей обходить перегородки
+"""
 mutable struct BorderRobot <: AbstractBorderRobot
     robot::Robot
     BorderRobot(r::Robot) = new(r)
     BorderRobot() = new(HorizonSideRobots.Robot())
 end
 
+"""
+Возвращает объект робота из структуры BorderRobot
+"""
 get(robot::BorderRobot) = robot.robot
 
 #--------------------------------------------------
+"""
+Структура координат
+"""
 mutable struct Coords
     x::Integer
     y::Integer
@@ -105,6 +134,9 @@ mutable struct Coords
     Coords(a::Integer, b::Integer) = new(a, b)
 end
 
+"""
+Функция, меняющая координаты при движении
+"""
 function move!(c::Coords, direction::HorizonSide)
     if direction == Nord
         c.y += 1
@@ -117,12 +149,22 @@ function move!(c::Coords, direction::HorizonSide)
     end
 end
 
+"""
+Функция, получайющая координаты из объекта Coords
+"""
 get_coords(c::Coords) = [c.x, c.y]
 
+"""
+Функция, меняющая координаты на заданные
+"""
 function set_coords(c::Coords, x::Int, y::Int)
     c.x = x
     c.y = y
 end
+
+"""
+Структура, позволяюща отслеживать координаты робота, умеющего обходить препятствия
+"""
 struct CoordBorderRobot <:AbstractBorderRobot
     robot::Robot
     coord::Coords
@@ -131,24 +173,47 @@ struct CoordBorderRobot <:AbstractBorderRobot
     CoordBorderRobot() = new(Robot(), Coords())
 end
 
+"""
+Переопределение функции движения для одновременного движения робота и координат
+"""
 function move!(r::CoordBorderRobot, direction::HorizonSide)
     move!(r.robot, direction)
     move!(r.coord, direction)
 end
 
+"""
+Функция, возвращающая объект робота из объекта CoordBorderRobot
+"""
 get(r::CoordBorderRobot) = r.robot
+
+
+"""
+Функция, получающая координаты робота типа CoordBorderRobot
+"""
+get_coords(r::CoordBorderRobot) =  get_coords(r.coord)
+
+"""
+Абстрактный тип робота, способного определять координаты
+"""
 abstract type AbstractCoordRobot <: AbstractRobot
 end
 
-function get_coords(r::AbstractCoordRobot)
-    return r.coords.x, r.coords.y
-end
+"""
+Функция, получающая координаты робота дочернего типа AbstractCoordRobot
+"""
+get_coords(r::AbstractCoordRobot) = get_coords(r.coords)
 
+"""
+Переопределение функции перемещения робота для робота дочернего типа AbstractCoordRobot
+"""
 function move!(robot::AbstractCoordRobot, direction::HorizonSide)
     move!(robot.robot, direction)
     move!(robot.coords, direction)
 end
 
+"""
+Структура робота, умеющего определять свои координаты
+"""
 mutable struct CoordRobot <: AbstractCoordRobot
     robot::Robot
     coords::Coords
@@ -157,4 +222,7 @@ mutable struct CoordRobot <: AbstractCoordRobot
     CoordRobot() = new(Robot(), Coords())
 end
 
+"""
+Функция, возвращающая объект робота из объекта типа CoordRobot
+"""
 get(r::CoordRobot) = r.robot

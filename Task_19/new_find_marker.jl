@@ -1,6 +1,9 @@
 include("..\\types_and_structs.jl")
 
-#TODO: comments
+#TODO
+"""
+Функция, позволяющая сделать шаг через бесконечную перегородку.
+"""
 function try_move_inf_border!(r::BorderRobot, direction::HorizonSide)
     delta_r = 0
     delta_l = 0
@@ -23,7 +26,9 @@ function try_move_inf_border!(r::BorderRobot, direction::HorizonSide)
     end
 end
 
-
+"""
+Функция, делающая n шагов и останавливающаяся на маркере. 
+"""
 function do_n_steps_scan!(r::BorderRobot, direction::HorizonSide, steps::Int)
     for i in 1:steps
         try_move_inf_border!(r, direction)
@@ -34,6 +39,14 @@ function do_n_steps_scan!(r::BorderRobot, direction::HorizonSide, steps::Int)
     return false
 end
 
+"""
+Функция, ищущая маркер на бесконечном поле
+\n\n
+На поле могут находится прямоугольные перегородки, которые могут вырождаться в отрезки. 
+Эти внутренние перегородки изолированы друг от друга и от внешней рамки
+\n
+r - объект робота
+"""
 function find_marker(robot::Robot)
     r = BorderRobot(robot)
     direction = Nord
@@ -47,6 +60,3 @@ function find_marker(robot::Robot)
         flag = !flag
     end
 end
-
-r = Robot("find_marker.sit", animate=true)
-find_marker(r)

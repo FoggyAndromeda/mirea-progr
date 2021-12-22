@@ -1,6 +1,13 @@
 include("..\\types_and_structs.jl")
 
-#TODO: commets
+"""
+Функция, заполняющая поле меркерами и возвращающая робота в начальное положение
+\n\n
+На поле могут находится прямоугольные перегородки, которые могут вырождаться в отрезки. 
+Эти внутренние перегородки изолированы друг от друга и от внешней рамки
+\n
+r - объект робота
+"""
 function fill(robot::Robot)
     r = BorderRobot(robot)
     down = move_until_border!(r, Sud)
@@ -10,6 +17,9 @@ function fill(robot::Robot)
     do_n_steps_try!(r, Nord, down)
 end
 
+"""
+Рекурсивное заполнение поля. Начальное положение - левый нижний угол.
+"""
 function fill_rec(r::Robot)
     putmarker!(r)
     for direction in [Nord, Ost]

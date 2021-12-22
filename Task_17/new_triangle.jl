@@ -1,6 +1,13 @@
 include("..\\types_and_structs.jl")
 
-#TODO: comments
+"""
+Функция, заполняющая строки снизу вверх уменьшаюшимся количеством маркеров.
+\n\n
+На поле могут находится прямоугольные перегородки, которые могут вырождаться в отрезки. 
+Эти внутренние перегородки изолированы друг от друга и от внешней рамки
+\n
+r - объект робота
+"""
 function triangle(robot::Robot)
     r = BorderRobot(robot)
     down = move_until_border!(r, Sud)
@@ -28,6 +35,3 @@ function triangle(robot::Robot)
     do_n_steps_try!(r, Ost, left)
     do_n_steps_try!(r, Nord, down)
 end
-
-r = Robot("triangle.sit", animate=true)
-triangle(r)

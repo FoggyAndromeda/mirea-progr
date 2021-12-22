@@ -59,6 +59,3 @@ function big_chess(r::Robot, tile_size::Int)
     end
     move_path!(r, path, back=true)
 end
-
-r = Robot("big_chess.sit", animate=true)
-big_chess(r, 5)

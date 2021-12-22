@@ -1,6 +1,13 @@
 include("..\\types_and_structs.jl")
 
-#TODO: comments
+"""
+Функция, считающая количество вертикальных и горизонатльных перегородок (прямоугольных - нет)
+\n\n
+На поле могут находится прямоугольные перегородки, которые могут вырождаться в отрезки. 
+Эти внутренние перегородки изолированы друг от друга и от внешней рамки
+\n
+r - объект робота
+"""
 function count_borders(robot::Robot)
     r = BorderRobot(robot)
     down = move_until_border!(r, Sud)
@@ -31,6 +38,3 @@ function count_borders(robot::Robot)
     do_n_steps_try!(r, Nord, down)
     return ans
 end
-
-r = Robot("all_borders.sit")
-println(count_borders(r))

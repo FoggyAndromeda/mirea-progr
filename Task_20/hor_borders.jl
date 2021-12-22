@@ -1,8 +1,14 @@
 using HorizonSideRobots
 include("..\\movement_patterns_lib.jl")
 
-#TODO: comments
-
+"""
+Функция, считающая количество горизонтальных перегородок на поле (вертикальных - нет)
+\n\n
+На поле могут находится прямоугольные перегородки, которые могут вырождаться в отрезки. 
+Эти внутренние перегородки изолированы друг от друга и от внешней рамки
+\n
+r - объект робота
+"""
 function count_horizontal_borders(r::Robot)
     left = move_until_border!(r, West)
     down = move_until_border!(r, Sud)
